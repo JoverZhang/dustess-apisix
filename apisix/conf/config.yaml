@@ -44,6 +44,8 @@ etcd:
     - "http://10.233.76.58:2379"          # multiple etcd address
   prefix: "/apisix"               # apisix configurations prefix
   timeout: 30                     # 30 seconds
+  user: root
+  password: fJFjmsuX0A
 
 plugin_attr:
   prometheus:
