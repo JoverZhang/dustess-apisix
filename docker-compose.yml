@@ -3,6 +3,7 @@ version: '3'
 services:
   apisix-dashboard:
     image: apache/apisix-dashboard:2.7
+    restart: always
     volumes:
       - ./apisix-dashboard/conf/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
     ports:
@@ -13,6 +14,7 @@ services:
   apisix:
     build:
       context: ./apisix
+    restart: always
     volumes:
       - ./logs/apisix:/usr/local/apisix/logs
     depends_on:
@@ -28,6 +30,7 @@ services:
   etcd:
     image: bitnami/etcd:3.4.15
     user: root
+    restart: always
     volumes:
       - ./etcd/data:/bitnami/etcd
     environment:
