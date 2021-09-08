@@ -4,6 +4,7 @@ local jwt = require('resty.jwt')
 local log = core.log
 local sub_str = string.sub
 local lower_str = string.lower
+local len_str = string.len
 
 local DEFAULT_TOKEN_NAME = 'Blade-Auth'
 local DEFAULT_SING_KEY = 'bladexisapowerfulmicroservicearchitectureupgradedandoptimizedfromacommercialproject'
@@ -23,6 +24,18 @@ local schema = {
             type = 'string',
             default = DEFAULT_SING_KEY,
         },
+        skip_urls = {
+            type = "array",
+            description = "You can specify some URLs that will skip authentication when accessing.",
+            items = {
+                type = "string",
+                minLength = 1,
+                maxLength = 4096,
+            },
+            minItems = 1,
+            uniqueItems = true,
+        },
+        required = { "skip_urls" },
     },
 }
 
@@ -40,6 +53,24 @@ end
 
 --- Main Logics
 
+local function start_with_str(str, prefix)
+    return sub_str(str, 1, len_str(prefix)) == prefix
+end
+
+---Handle skip urls
+---
+---@param conf table
+---@param ctx table
+---@return boolean skip authentication if true
+local function handle_skip_authentication(conf, ctx)
+    local request_url = ngx.var.uri
+    for _, skip_url in ipairs(conf.skip_urls) do
+        if start_with_str(request_url, skip_url) then
+            return true
+        end
+    end
+    return false
+end
 
 ---Get JWT token
 ---
@@ -93,6 +124,11 @@ end
 ---@param ctx table
 ---@return (number, table) (status, body)
 function _M.rewrite(conf, ctx)
+    -- skip authentication
+    if handle_skip_authentication(conf, ctx) then
+        return
+    end
+
     local jwt_token = get_jwt_token(conf, ctx)
     if not jwt_token then
         return 401, 'Missing token'
