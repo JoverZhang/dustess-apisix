@@ -41,11 +41,9 @@ discovery:
 
 etcd:
   host:                           # it's possible to define multiple etcd hosts addresses of the same etcd cluster.
-    - "http://10.233.76.58:2379"          # multiple etcd address
+    - "http://etcd:2379"          # multiple etcd address
   prefix: "/apisix"               # apisix configurations prefix
   timeout: 30                     # 30 seconds
-  user: root
-  password: fJFjmsuX0A
 
 plugin_attr:
   prometheus:
