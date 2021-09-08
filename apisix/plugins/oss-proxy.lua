@@ -3,14 +3,20 @@ local nacos = require('apisix.discovery.nacos')
 local roundrobin = require('apisix.balancer.roundrobin')
 local http = require('resty.http')
 
+local len_str = string.len
 local sub_str = string.sub
 local log = core.log
 local nacos_nodes = nacos.nodes
 
 local schema = {
     type = 'object',
-    properties = {},
-    required = {},
+    properties = {
+        uri_prefix = {
+            description = 'The URI prefix for accessing OSS resources.',
+            type = 'string',
+        },
+    },
+    required = { "uri_prefix" },
 }
 
 local plugin_name = 'oss-proxy'
@@ -29,6 +35,17 @@ end
 
 --- Main Logics
 
+
+---获取 文件名
+---
+---@param conf table
+---@param ctx table
+---@return string file name
+local function get_filename(conf, ctx)
+    local file_name = sub_str(ctx.var.uri, len_str(conf.uri_prefix) + 1)
+    log.notice('file name: ', file_name)
+    return file_name
+end
 
 ---获取 资源服务 的地址
 ---
@@ -111,8 +128,7 @@ end
 ---@param ctx table
 ---@return (number, table) (status, body)
 function _M.access(conf, ctx)
-    local file_name = sub_str(ctx.var.uri, 6)
-    log.notice('file name: ', file_name)
+    local file_name = get_filename(conf, ctx)
 
     local node_host, err = get_resource_service_node(conf, ctx)
     if not node_host then
@@ -121,7 +137,7 @@ function _M.access(conf, ctx)
 
     local link, err = get_oss_link(node_host, file_name, ctx.ext_var.jwt_obj.tenant_id)
     if not link then
-        return 500, err
+        return 404, err
     end
 
     log.notice('link: ', link)
