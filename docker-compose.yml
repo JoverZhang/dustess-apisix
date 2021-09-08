@@ -4,7 +4,7 @@ services:
   apisix-dashboard:
     image: apache/apisix-dashboard:2.7
     volumes:
-      - ./dashboard_conf/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
+      - ./apisix-dashboard/conf/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
     ports:
       - "19000:9000"
     networks:
