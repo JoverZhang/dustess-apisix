@@ -1,3 +1,4 @@
 /.idea/
 /logs/
 /etcd/data/
+/apisix/static/

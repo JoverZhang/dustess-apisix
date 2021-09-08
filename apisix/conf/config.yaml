@@ -21,6 +21,14 @@ apisix:
 
 nginx_config:
   error_log_level: notice
+  http_server_configuration_snippet: |
+    location ~^/(|index.html|favicon.png)$ {
+      root   /usr/local/apisix/static;
+      index  index.html;
+    }
+    location ~^/(cdn|const|css|fonts|img|js|lib|svg|util) {
+      root   /usr/local/apisix/static/static;
+    }
 
 plugins:
   - proxy-rewrite
