@@ -17,6 +17,7 @@ services:
     restart: always
     volumes:
       - ./logs/apisix:/usr/local/apisix/logs
+      - ./apisix/static:/usr/local/apisix/static
     depends_on:
       - etcd
     ports:
