@@ -32,7 +32,6 @@ local schema = {
                 minLength = 1,
                 maxLength = 4096,
             },
-            minItems = 1,
             uniqueItems = true,
             default = {},
         },
