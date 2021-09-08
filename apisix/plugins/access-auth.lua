@@ -34,8 +34,8 @@ local schema = {
             },
             minItems = 1,
             uniqueItems = true,
+            default = {},
         },
-        required = { "skip_urls" },
     },
 }
 
